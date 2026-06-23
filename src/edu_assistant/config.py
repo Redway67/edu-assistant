@@ -16,7 +16,7 @@ class LLMConfig(BaseModel):
     model: str
     base_url: str | None = None
     timeout: float = 60.0
-    # TODO: создать поле max_output_tokens
+    max_output_tokens: int
 
 
 class RoleConfig(BaseModel):
@@ -27,7 +27,7 @@ class Config(BaseModel):
     app: AppConfig
     llms: dict[str, LLMConfig]
     roles: dict[RoleType, RoleConfig]
-    # TODO: создать поле system_templates, словарь с ключами TemplateType и строковыми значениями - шаблонами системных инструкций для ролей
+    system_templates: dict[TemplateType, str]
 
     @classmethod
     def from_yaml_file(cls, config_path: str | Path = "config.yml") -> Self:
@@ -37,6 +37,5 @@ class Config(BaseModel):
 
     def render_system_instructions(self, role: RoleType, template: TemplateType) -> str:
         instruction = self.roles[role].instruction.strip()
-        # TODO: достать шаблон системной инструкции system_template и подставить в него инструкцию. Вернуть результат
-        
-        
+        system_template = self.system_templates[template]
+        return system_template.format(role_instruction=instruction)
