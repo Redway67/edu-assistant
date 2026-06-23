@@ -30,6 +30,12 @@ uv run main.py
 uv run fastapi dev
 ```
 
+Демо-страница доступна в браузере:
+
+```text
+http://127.0.0.1:8000/demo
+```
+
 Основной эндпоинт:
 
 ```text
@@ -41,7 +47,7 @@ POST /ask
 - `role`: роль ассистента, например `math_tutor` или `history_tutor`;
 - `template`: шаблон ответа, например `tutor_quick_answer`;
 - `question`: вопрос пользователя;
-- `llm_key`: ключ модели из `config.yml`, по умолчанию `ollama`.
+- `llm_key`: ключ модели из `config.yml`, по умолчанию `api`.
 
 ## Модели
 

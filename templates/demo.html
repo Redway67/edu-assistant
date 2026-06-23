@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Чат с ИИ-тьютором</title>
+    <style>
+        body {
+            max-width: 760px;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+        form {
+            display: grid;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        fieldset {
+            border: 1px solid #d0d7de;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        legend {
+            font-weight: 700;
+        }
+
+        label {
+            display: inline-flex;
+            gap: 6px;
+            margin-right: 16px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 90px;
+            box-sizing: border-box;
+            padding: 10px;
+            font: inherit;
+        }
+
+        button {
+            width: fit-content;
+            padding: 10px 18px;
+            cursor: pointer;
+        }
+
+        #answer {
+            min-height: 48px;
+            margin-top: 8px;
+            padding: 12px;
+            border: 1px solid #d0d7de;
+            border-radius: 8px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Чат с ИИ-тьютором</h1>
+    <p>Виртуальный преподаватель отвечает на вопросы студентов.</p>
+
+    <form id="ask-form">
+        <fieldset>
+            <legend>Роль</legend>
+            <label>
+                <input type="radio" name="role" value="math_tutor" checked>
+                Тьютор по математике
+            </label>
+            <label>
+                <input type="radio" name="role" value="history_tutor">
+                Тьютор по истории
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Стиль ответа</legend>
+            <label>
+                <input type="radio" name="template" value="tutor_quick_answer" checked>
+                Краткий ответ
+            </label>
+            <label>
+                <input type="radio" name="template" value="tutor_full_answer">
+                Развернутый ответ
+            </label>
+        </fieldset>
+
+        <label for="question">Вопрос</label>
+        <textarea id="question" name="question">Как учиться?</textarea>
+
+        <button type="submit">Спросить</button>
+    </form>
+
+    <h2>Ответ</h2>
+    <div id="answer">Ответ появится здесь.</div>
+
+    <script>
+        const form = document.querySelector("#ask-form");
+        const answer = document.querySelector("#answer");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            answer.textContent = "Ждем ответ...";
+
+            try {
+                const response = await fetch("/ask", {
+                    method: "POST",
+                    body: new FormData(form),
+                });
+                const text = await response.text();
+                answer.textContent = response.ok ? text : `Ошибка: ${text}`;
+            } catch (error) {
+                answer.textContent = `Ошибка запроса: ${error}`;
+            }
+        });
+    </script>
+</body>
+</html>

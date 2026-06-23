@@ -1,12 +1,17 @@
 from typing import Annotated
 
 from fastapi import Body, FastAPI, Form, HTTPException
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 
 from edu_assistant.assistant import create_response
 from edu_assistant.config import RoleType, TemplateType
 
 app = FastAPI()
+
+
+@app.get("/demo")
+def demo():
+    return FileResponse("templates/demo.html")
 
 
 @app.post("/assistant", response_class=PlainTextResponse)
