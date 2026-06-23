@@ -1,14 +1,9 @@
-from pathlib import Path
-import yaml
+from edu_assistant.config import Config
 
 # Create config file path
-config_path = Path("config.yml")
+config = Config.from_yaml_file("config.yml")
+print("Full config:", config)
+print("LLM model:", config.llms["api"].model)
 
-# Read file as text
-config_str = config_path.read_text(encoding="utf-8")
-
-# TODO: Распарсить текст в dict, используя safe_load из yaml
-
-
-# TODO: Вывести на экран полученный словарь
-
+system_prompt = config.render_system_instructions(role="history_tutor", template="tutor_quick_answer")
+print("System prompt:", system_prompt)
