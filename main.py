@@ -1,14 +1,16 @@
-from edu_assistant.assistant import create_response
+from fastapi.testclient import TestClient
 
-# Prepare prompt for LLM
-INPUT_PROMPT = "Кто победил, печенеги или половцы?"
+from edu_assistant.api import app
 
-# Call assistant
-response = create_response(
-    llm_key="ollama",
-    role="history_tutor",
-    template="tutor_quick_answer",
-    prompt=INPUT_PROMPT,
+client = TestClient(app)
+
+response = client.post(
+    "/ask",
+    data={
+        "role": "math_tutor",
+        "template": "tutor_quick_answer",
+        "question": "Что такое число Пи?",
+    },
 )
 
-print(response)
+print(response.text)
