@@ -8,7 +8,6 @@ from sympy.parsing.sympy_parser import (
 )
 from sympy.core.sympify import SympifyError
 
-
 _TRAILING_FORMULA_RE = re.compile(r"[0-9A-Za-z+\-*/^().,\s]+$")
 _OPERATOR_RE = re.compile(r"[+\-*/^()]")
 

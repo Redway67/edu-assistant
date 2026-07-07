@@ -93,7 +93,7 @@
         </fieldset>
 
         <label for="question">Вопрос</label>
-        <textarea id="question" name="question">Как учиться?</textarea>
+        <textarea id="question" name="question">Что такое число Пи?</textarea>
 
         <button type="submit">Спросить</button>
     </form>
@@ -107,17 +107,30 @@
 
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
+            const button = form.querySelector("button");
+            const controller = new AbortController();
+            const timeoutId = window.setTimeout(() => controller.abort(), 45000);
+
+            button.disabled = true;
             answer.textContent = "Ждем ответ...";
 
             try {
                 const response = await fetch("/ask", {
                     method: "POST",
                     body: new FormData(form),
+                    signal: controller.signal,
                 });
                 const text = await response.text();
                 answer.textContent = response.ok ? text : `Ошибка: ${text}`;
             } catch (error) {
-                answer.textContent = `Ошибка запроса: ${error}`;
+                if (error.name === "AbortError") {
+                    answer.textContent = "Ошибка: ассистент не ответил за 45 секунд.";
+                } else {
+                    answer.textContent = `Ошибка запроса: ${error}`;
+                }
+            } finally {
+                window.clearTimeout(timeoutId);
+                button.disabled = false;
             }
         });
     </script>
