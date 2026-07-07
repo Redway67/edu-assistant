@@ -1,7 +1,6 @@
-from typing import Annotated
-
-from fastapi import Body, FastAPI, Form, HTTPException
-from fastapi.responses import FileResponse, PlainTextResponse
+from openai import OpenAIError
+from fastapi import FastAPI, Form, HTTPException
+from fastapi.responses import FileResponse
 
 from edu_assistant.assistant import create_response
 from edu_assistant.config import RoleType, TemplateType
@@ -14,53 +13,19 @@ def demo():
     return FileResponse("templates/demo.html")
 
 
-@app.post("/assistant", response_class=PlainTextResponse)
-def create_assistant_response(
-    llm_key: str = Body(...),
-    role: RoleType = Body(...),
-    template: TemplateType = Body(...),
-    prompt: str = Body(...),
-) -> str:
-    return create_response(
-        llm_key=llm_key,
-        role=role,
-        template=template,
-        prompt=prompt,
-    )
-
-
-@app.post("/ask", response_class=PlainTextResponse)
+@app.post('/ask')
 def ask(
-    role: Annotated[
-        RoleType,
-        Form(description="Роль AI-ассистента из конфигурации."),
-    ],
-    template: Annotated[
-        TemplateType,
-        Form(description="Шаблон системной инструкции для ответа."),
-    ],
-    # Вопрос пользователя, который будет передан ассистенту.
-    question: Annotated[
-        str,
-        Form(
-            description="Вопрос пользователя для AI-ассистента.",
-            examples=["Что такое число Пи?"],
-        ),
-    ],
-    llm_key: Annotated[
-        str,
-        Form(description="Ключ LLM-модели из секции llms в config.yml."),
-    ] = "api",
+    role: RoleType = Form(description="Role of AI assistant"),
+    template: TemplateType = Form(description="Response format"),
+    question: str = Form(description="Student question", examples=["Ты кто?"]),
 ) -> str:
+    """Ask question to educational assistant."""
     try:
         return create_response(
-            llm_key=llm_key,
+            llm_key="api",
             role=role,
             template=template,
             prompt=question,
         )
-    except Exception as error:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Не удалось получить ответ ассистента: {error}",
-        ) from error
+    except OpenAIError as error:
+        raise HTTPException(status_code=502, detail=str(error)) from error

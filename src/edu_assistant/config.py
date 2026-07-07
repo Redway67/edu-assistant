@@ -16,7 +16,7 @@ class LLMConfig(BaseModel):
     model: str
     base_url: str | None = None
     timeout: float = 60.0
-    max_output_tokens: int
+    max_output_tokens: int = 512
 
 
 class RoleConfig(BaseModel):
@@ -38,4 +38,4 @@ class Config(BaseModel):
     def render_system_instructions(self, role: RoleType, template: TemplateType) -> str:
         instruction = self.roles[role].instruction.strip()
         system_template = self.system_templates[template]
-        return system_template.format(role_instruction=instruction)
+        return system_template.format(role_instruction=instruction).strip()

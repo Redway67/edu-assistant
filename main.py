@@ -1,16 +1,17 @@
-from fastapi.testclient import TestClient
+from edu_assistant.assistant import create_response
 
-from edu_assistant.api import app
 
-client = TestClient(app)
+# TODO: поэкспериментировать с разными формулами и выражениями
+# PROMPT = "1+2*2"
+PROMPT = "Посчитай 1+1/2-0,5-(3/2-3/6)"
+# PROMPT = "Упрости выражение: x^2-x(x+1)+2(0.5x-1)+2"
 
-response = client.post(
-    "/ask",
-    data={
-        "role": "math_tutor",
-        "template": "tutor_quick_answer",
-        "question": "Что такое число Пи?",
-    },
+response = create_response(
+    llm_key="api",
+    role="math_tutor",
+    template="tutor_quick_answer",
+    prompt=PROMPT,
 )
 
-print(response.text)
+print("-> Ответ ассистента:")
+print(response)
