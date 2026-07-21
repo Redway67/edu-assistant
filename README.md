@@ -57,3 +57,5 @@ POST /ask
 - `api_full`: `gpt-5.4`;
 - `ollama`: `gemma3:1b`;
 - `ollama_small`: `gemma3:270m`.
+
+можно настроить дополнительные.
